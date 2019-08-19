@@ -353,7 +353,7 @@
                <enum>Qt::StrongFocus</enum>
               </property>
               <property name="accessibleName">
-               <string>Favorite icon download timeout seconds</string>
+               <string>Website icon download timeout in seconds</string>
               </property>
               <property name="suffix">
                <string comment="Seconds"> sec</string>
