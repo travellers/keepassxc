@@ -31,6 +31,8 @@
 #include "keys/PasswordKey.h"
 #include "keys/YkChallengeResponseKey.h"
 #include "touchid/TouchID.h"
+#include "keys/Fingerprint/Fingerprint.h" //wanghai add on 20190825
+
 
 #include "config-keepassx.h"
 
@@ -59,6 +61,9 @@ DatabaseOpenWidget::DatabaseOpenWidget(QWidget* parent)
     m_ui->buttonTogglePassword->setIcon(filePath()->onOffIcon("actions", "password-show"));
     connect(m_ui->buttonTogglePassword, SIGNAL(toggled(bool)), m_ui->editPassword, SLOT(setShowPassword(bool)));
     connect(m_ui->buttonBrowseFile, SIGNAL(clicked()), SLOT(browseKeyFile()));
+    //wanghai add on 20190825
+    connect(m_ui->fingerPrintButton, SIGNAL(clicked()), this, SLOT(verifyFingerprint()));
+    //wanghai e
 
     connect(m_ui->buttonBox, SIGNAL(accepted()), SLOT(openDatabase()));
     connect(m_ui->buttonBox, SIGNAL(rejected()), SLOT(reject()));
@@ -103,6 +108,61 @@ DatabaseOpenWidget::DatabaseOpenWidget(QWidget* parent)
 DatabaseOpenWidget::~DatabaseOpenWidget()
 {
 }
+
+//wanghai add on 20190825
+void DatabaseOpenWidget::verifyFingerprint()
+{
+    unsigned long sessionHandle = 0;
+    m_ui->editPassword->clear();
+m_ui->editPassword->setText(QString("enter verifyFingerprint!"));
+    //open a session
+    if(Fingerprint::OpenSession(&sessionHandle) != false)
+    {
+        //show hint for pressing finger
+m_ui->editPassword->setText(QString("Have OpenSession!"));
+        //check if the fingerprint is right
+        if(Fingerprint::CheckFingerprint(sessionHandle) != false)
+        {
+            m_ui->editPassword->setText(QString("Success! Right Finger!"));
+            //get password from a local file
+            std::string p1, p2;
+            QByteArray arr;
+            QFile file("d:\\wh\\ipas.txt");
+            if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+            {
+                m_ui->editPassword->setText(QString("Failure! cann't open file"));
+                return;
+            }
+            #define magic_str1 "iem0cp"
+            #define magic_str2 "7w20em"
+            arr = file.readAll();
+            std::string str(arr.toStdString().c_str());
+            std::string::size_type pos = str.find(magic_str1);
+            if(pos != std::string::npos)
+            {
+                p1 = str.substr(pos + strlen(magic_str1), 4) + " ";
+            }else
+            {
+                m_ui->editPassword->setText(QString("Failure! cannot find magic 1!"));
+                return;
+            }
+            
+            pos = str.find(magic_str2);
+            if(pos != std::string::npos)
+            {
+                p2 = str.substr(pos + strlen(magic_str2), 4) + " ";
+            }else
+            {
+                m_ui->editPassword->setText(QString("Failure! cannot find magic 2!"));
+                return;
+            }
+
+            m_ui->editPassword->setText(QString(p1.c_str())+QString(p2.c_str()));
+            
+        }
+    }
+}
+//wanghai e
 
 void DatabaseOpenWidget::showEvent(QShowEvent* event)
 {

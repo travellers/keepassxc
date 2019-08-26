@@ -123,23 +123,8 @@
           <property name="lineWidth">
            <number>2</number>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <property name="sizeConstraint">
-            <enum>QLayout::SetMinimumSize</enum>
-           </property>
-           <property name="leftMargin">
-            <number>20</number>
-           </property>
-           <property name="topMargin">
-            <number>15</number>
-           </property>
-           <property name="rightMargin">
-            <number>20</number>
-           </property>
-           <property name="bottomMargin">
-            <number>15</number>
-           </property>
-           <item>
+          <layout class="QGridLayout" name="gridLayout_4">
+           <item row="0" column="0">
             <widget class="QFrame" name="verticalFrame">
              <property name="minimumSize">
               <size>
@@ -173,6 +158,13 @@
                   </property>
                   <property name="echoMode">
                    <enum>QLineEdit::Password</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="fingerPrintButton">
+                  <property name="text">
+                   <string>fingerprint input</string>
                   </property>
                  </widget>
                 </item>

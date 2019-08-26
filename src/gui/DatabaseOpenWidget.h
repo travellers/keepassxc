@@ -68,6 +68,7 @@ private slots:
     void yubikeyDetectComplete();
     void noYubikeyFound();
     void openHardwareKeyHelp();
+    void verifyFingerprint(); //wanghai add on 20190825
 
 protected:
     const QScopedPointer<Ui::DatabaseOpenWidget> m_ui;
