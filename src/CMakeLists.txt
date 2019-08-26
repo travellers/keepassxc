@@ -284,14 +284,6 @@ configure_file(git-info.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/git-info.h)
 add_library(autotype STATIC ${autotype_SOURCES})
 target_link_libraries(autotype Qt5::Core Qt5::Widgets)
 
-# wanghai add
-if(MINGW)
-#message(${CMAKE_CURRENT_SOURCE_DIR})
-#add_library(Fingerprint SHARED IMPORTED)
-#set_target_properties(Fingerprint PROPERTIES IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/keys/Fingerprint/libFingerprint.so")
-endif()
-# wanghai e
-
 add_library(keepassx_core STATIC ${keepassx_SOURCES})
 
 set_target_properties(keepassx_core PROPERTIES COMPILE_DEFINITIONS KEEPASSX_BUILDING_CORE)
@@ -339,6 +331,13 @@ if(MINGW)
     target_link_libraries(keepassx_core Wtsapi32.lib Ws2_32.lib)
 endif()
 
+# wanghai add
+if( (MINGW) AND (CMAKE_SYSTEM MATCHES "Windows-10"))
+link_directories("${CMAKE_CURRENT_SOURCE_DIR}/keys/Fingerprint/")
+target_link_libraries(keepassx_core libFingerprint.a)
+endif()
+# wanghai e
+
 if(MINGW)
     include(GenerateProductVersion)
     generate_product_version(
@@ -353,14 +352,6 @@ endif()
 
 add_executable(${PROGNAME} WIN32 ${keepassx_SOURCES_MAINEXE} ${WIN32_ProductVersionFiles})
 target_link_libraries(${PROGNAME} keepassx_core)
-
-# wanghai add
-if(MINGW)
-# add_library(Fingerprint STATIC "${CMAKE_CURRENT_SOURCE_DIR}/keys/Fingerprint/libFingerprint.so")
-link_directories("${CMAKE_CURRENT_SOURCE_DIR}/keys/Fingerprint/")
-target_link_libraries(${PROGNAME} libFingerprint.so) # wanghai add on 20190825
-endif()
-# wanghai e
 
 set_target_properties(${PROGNAME} PROPERTIES ENABLE_EXPORTS ON)
 
